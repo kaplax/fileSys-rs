@@ -1,4 +1,7 @@
-use crate::components::breadcrumb::{Breadcrumb, BreadcrumbButton, BreadcrumbItem};
+use crate::components::breadcrumb::{
+    Breadcrumb, BreadcrumbButton, BreadcrumbDivider, BreadcrumbItem,
+};
+use crate::components::config_provider::ConfigProvider;
 use crate::utils::url::get_url_params;
 use leptos::prelude::*;
 use leptos::web_sys::window;
@@ -17,21 +20,33 @@ pub fn App() -> impl IntoView {
         .filter(|part| !part.is_empty())
         .map(|part| part.to_string())
         .collect::<Vec<String>>();
+
+    let path_parts_len = path_parts.len();
     view! {
-        <div>
-            <Breadcrumb>
-                {
+        <ConfigProvider>
+            <div>
+                <Breadcrumb>
+                    {
                     path_parts.into_iter()
-                    .map(|path| view! {
+                    .enumerate()
+                    .map(|(index, path)| {
+                        let is_last = index == path_parts_len - 1;
+                        view! {
                         <BreadcrumbItem>
                             <BreadcrumbButton >
                                 {path}
                             </BreadcrumbButton>
                         </BreadcrumbItem>
-                    })
+                        {if !is_last {
+                            Some(view! { <BreadcrumbDivider /> })
+                        } else {
+                            None
+                        }}
+                    }})
                     .collect::<Vec<_>>()
                 }
-            </Breadcrumb>
-        </div>
+                </Breadcrumb>
+            </div>
+        </ConfigProvider>
     }
 }

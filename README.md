@@ -25,4 +25,8 @@
 ### Day 01
 - 项目搭建
 - App 组件
-- 面包屑组件
+- Breadcrumb 组件
+
+### Day 02
+- 组件引入 CSS
+- 完善 Breadcrumb 组件
