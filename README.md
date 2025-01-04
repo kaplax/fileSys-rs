@@ -30,3 +30,7 @@
 ### Day 02
 - 组件引入 CSS
 - 完善 Breadcrumb 组件
+
+### Day 04
+- 引入 tailwindcss
+- 发送 http 请求，获取文件列表

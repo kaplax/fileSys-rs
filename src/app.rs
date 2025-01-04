@@ -1,52 +1,67 @@
-use crate::components::breadcrumb::{
-    Breadcrumb, BreadcrumbButton, BreadcrumbDivider, BreadcrumbItem,
-};
-use crate::components::config_provider::ConfigProvider;
-use crate::utils::url::get_url_params;
+use crate::container::header::Header;
+use crate::{components::config_provider::ConfigProvider, utils::request::Resp};
 use leptos::prelude::*;
-use leptos::web_sys::window;
+use leptos::server_fn::request::browser::Request;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+struct FileList {
+    list: Vec<File>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
+struct File {
+    ext: String,
+    is_dir: bool,
+    last_modified_time: String,
+    name: String,
+    size: i64,
+}
 
 #[component]
 pub fn App() -> impl IntoView {
-    let url = window().unwrap().location().search().unwrap();
-    let url_params = get_url_params(url.as_str());
-    let path = url_params
-        .unwrap()
-        .get("path")
-        .unwrap_or_default()
-        .to_string();
-    let path_parts = path
-        .split("/")
-        .filter(|part| !part.is_empty())
-        .map(|part| part.to_string())
-        .collect::<Vec<String>>();
+    let b = LocalResource::new(|| async move {
+        let res = Request::get("http://192.168.1.91:3002/api/fileList?path=/".into())
+            .send()
+            .await;
+        res.unwrap().json::<Resp<FileList>>().await
+    });
 
-    let path_parts_len = path_parts.len();
+    // let data = LocalResource::new(|| async move { run("/".into()).await });
+    let (files, set_files) = signal::<Vec<File>>(vec![]);
+    Effect::new(move || {
+        if let Some(Ok(data)) = b.read().as_deref() {
+            set_files.set(data.data.list.clone());
+        }
+
+        // match data {
+        //     Some(data) => match data {
+        //         Ok(data) => {
+        //             let res: Resp<FileList> = serde_wasm_bindgen::from_value(data.clone()).unwrap();
+        //             set_files.set(res.data.list);
+        //         }
+        //         Err(_) => (),
+        //     },
+        //     None => (),
+        // }
+    });
+
     view! {
         <ConfigProvider>
-            <div>
-                <Breadcrumb>
-                    {
-                    path_parts.into_iter()
-                    .enumerate()
-                    .map(|(index, path)| {
-                        let is_last = index == path_parts_len - 1;
-                        view! {
-                        <BreadcrumbItem>
-                            <BreadcrumbButton >
-                                {path}
-                            </BreadcrumbButton>
-                        </BreadcrumbItem>
-                        {if !is_last {
-                            Some(view! { <BreadcrumbDivider /> })
-                        } else {
-                            None
-                        }}
-                    }})
-                    .collect::<Vec<_>>()
+            <main>
+                <Header />
+                {
+                    move || {
+                        files.get()
+                            .into_iter()
+                            .map(|file| view! {
+                                <div>{file.name}</div>
+                            })
+                            .collect::<Vec<_>>()
+                    }
                 }
-                </Breadcrumb>
-            </div>
+            </main>
         </ConfigProvider>
     }
 }
