@@ -36,12 +36,10 @@
 
   flex-wrap: nowrap;
   min-width: unset;
-  height: 32px;
   color: var(--colorNeutralForeground2);
   background-color: var(--colorSubtleBackground);
   border-color: transparent;
   font-weight: var(--fontWeightRegular);
-  padding: var(--spacingHorizontalSNudge);
 }
 
 .kapla-breadcrumb-button:hover {

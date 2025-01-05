@@ -1,51 +1,33 @@
+use crate::api::api::{get_file_list, FileInfo, FileListReq};
 use crate::container::header::Header;
-use crate::{components::config_provider::ConfigProvider, utils::request::Resp};
+use crate::components::config_provider::ConfigProvider;
+use crate::utils::request::Req;
 use leptos::prelude::*;
-use leptos::server_fn::request::browser::Request;
-use serde::{Deserialize, Serialize};
+use web_sys::console::log_1;
 
-#[derive(Serialize, Deserialize, Debug)]
-struct FileList {
-    list: Vec<File>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-#[serde(rename_all = "camelCase")]
-struct File {
-    ext: String,
-    is_dir: bool,
-    last_modified_time: String,
-    name: String,
-    size: i64,
-}
 
 #[component]
 pub fn App() -> impl IntoView {
-    let b = LocalResource::new(|| async move {
-        let res = Request::get("http://192.168.1.91:3002/api/fileList?path=/".into())
-            .send()
-            .await;
-        res.unwrap().json::<Resp<FileList>>().await
+    let async_files = LocalResource::new(|| async move {
+        get_file_list(Req {
+            params: FileListReq {
+                path: "/".into(),
+            },
+            body: None,
+        })
+        .await
     });
 
-    // let data = LocalResource::new(|| async move { run("/".into()).await });
-    let (files, set_files) = signal::<Vec<File>>(vec![]);
+    let (files, set_files) = signal::<Vec<FileInfo>>(vec![]);
     Effect::new(move || {
-        if let Some(Ok(data)) = b.read().as_deref() {
-            set_files.set(data.data.list.clone());
+        if let Some(Err(e)) = async_files.read().as_deref() {
+            log_1(&format!("Error: {:?}", e.list).into());
         }
-
-        // match data {
-        //     Some(data) => match data {
-        //         Ok(data) => {
-        //             let res: Resp<FileList> = serde_wasm_bindgen::from_value(data.clone()).unwrap();
-        //             set_files.set(res.data.list);
-        //         }
-        //         Err(_) => (),
-        //     },
-        //     None => (),
-        // }
+        if let Some(Ok(data)) = async_files.read().as_deref() {
+            set_files.set(data.list.clone());
+        }
     });
+
 
     view! {
         <ConfigProvider>

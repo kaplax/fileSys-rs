@@ -18,8 +18,13 @@ pub fn Header() -> impl IntoView {
 
     let path_parts_len = path_parts.len();
     view! {
-        <header class="border-b border-gray-200 shadow-sm">
+        <header class="border-b border-gray-200 shadow-sm py-2 px-4 ">
         <Breadcrumb>
+          <BreadcrumbItem>
+            <BreadcrumbButton>
+              <a class="text-primary-color">"全部文件"</a>
+            </BreadcrumbButton>
+          </BreadcrumbItem>
             {
                 path_parts.into_iter()
                 .enumerate()

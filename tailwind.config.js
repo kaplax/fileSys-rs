@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./src/**/*.rs"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "primary-color": "#2378ff",
+      },
+    },
   },
   plugins: [],
 }

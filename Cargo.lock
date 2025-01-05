@@ -291,9 +291,11 @@ version = "0.1.0"
 dependencies = [
  "cfg-if",
  "console_error_panic_hook",
+ "gloo-net",
  "leptos",
  "serde",
  "serde-wasm-bindgen",
+ "serde_qs",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
