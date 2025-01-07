@@ -14,7 +14,7 @@ where
     T: Serialize,
 {
     pub params: T,
-    pub body: Option<T>,
+    // pub body: Option<T>,
 }
 
 #[derive(Debug)]
