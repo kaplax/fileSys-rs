@@ -2,7 +2,7 @@ use leptos::prelude::*;
 use web_sys::console::log_1;
 
 use crate::{
-    api::api::{get_file_list, FileInfo, FileListReq},
+    api::api::{self, FileInfo, FileListReq},
     utils::request::Req,
 };
 
@@ -18,7 +18,7 @@ pub fn use_file_list(path: String) -> UseFileList {
     let async_files = LocalResource::new(move || {
         let value = path.clone();
         async move {
-            get_file_list(Req {
+            api::get_file_list(Req {
                 params: FileListReq { path: value },
                 // body: None,
             })
