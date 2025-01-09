@@ -17,4 +17,8 @@
   --colorSubtleBackgroundPressed: #e0e0e0;
   --fontWeightSemibold: 600;
   --colorTransparentBackground: transparent;
+  
+
+  --padding-left: 12px;
+  --padding-right: 12px;
 }

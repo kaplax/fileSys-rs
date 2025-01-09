@@ -1,0 +1,28 @@
+.kapla-list {
+  .kapla-list-item {
+    display: block;
+    line-height: 1.5;
+    padding-left: var(--padding-left);
+    position: relative;
+    background-color: white;
+    .kapla-list-item-content {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-top: solid 1px #eee;
+      padding-right: var(--padding-right);
+      .kapla-list-item-content-main {
+        flex: auto;
+        padding: 12px 0;
+      }
+      .kapla-list-item-content-arraw {
+        flex: none;
+        display: flex;
+        align-items: center;
+        margin-left: 4px;
+        color: #ccc;
+        font-size: 19px;
+      }
+    }
+  }
+}
