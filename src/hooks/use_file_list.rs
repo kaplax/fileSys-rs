@@ -12,11 +12,12 @@ pub struct UseFileList {
     pub files: ReadSignal<Vec<FileInfo>>,
 }
 
-pub fn use_file_list(path: String) -> UseFileList {
+pub fn use_file_list(path: ReadSignal<String>) -> UseFileList {
     let (loading, set_loading) = signal::<bool>(true);
     let (files, set_files) = signal::<Vec<FileInfo>>(vec![]);
+
     let async_files = LocalResource::new(move || {
-        let value = path.clone();
+        let value = path.read().to_string();
         async move {
             api::get_file_list(Req {
                 params: FileListReq { path: value },
@@ -36,5 +37,6 @@ pub fn use_file_list(path: String) -> UseFileList {
             set_loading.set(false);
         }
     });
+    
     UseFileList { loading, files }
 }

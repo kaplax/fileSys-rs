@@ -4,6 +4,7 @@ mod utils;
 mod container;
 mod api;
 mod hooks;
+mod context;
 
 use app::App;
 

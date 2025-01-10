@@ -1,17 +1,13 @@
 use leptos::prelude::*;
-use wasm_bindgen::JsValue;
-use web_sys::console::log_1;
 
 use crate::{
-    components::loading::Loading,
-    components::list::{List, ListItem},
-    hooks::use_file_list::{use_file_list, UseFileList},
+    components::{list::{List, ListItem}, loading::Loading}, context::AppContext, hooks::use_file_list::{use_file_list, UseFileList}
 };
 
 #[component]
 pub fn FileList(
-  path: String,
 ) -> impl IntoView {
+    let AppContext { path, set_path } = use_context::<AppContext>().unwrap();
 
     let UseFileList {
         loading,
@@ -31,7 +27,9 @@ pub fn FileList(
                           let file_clone = file.clone();
                           view! {
                             <ListItem on_click=move |_| {
-                              log_1(&JsValue::from_str(&file_clone.name));
+                              if file_clone.is_dir {
+                                set_path.set(format!("{}/{}", path.read(), file_clone.name));
+                              }
                             }>
                                 <div>{file.name}</div>
                             </ListItem>

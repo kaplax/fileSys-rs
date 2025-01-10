@@ -44,3 +44,7 @@
 
 ### Day 09
 - list 组件 & on_click 事件
+
+### Day 10
+- 完善 file_list 组件， 点击进入子目录
+- 使用 context api 传递 path
