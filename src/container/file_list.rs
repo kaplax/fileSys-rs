@@ -1,7 +1,9 @@
+use std::collections::HashMap;
+
 use leptos::prelude::*;
 
 use crate::{
-    components::{list::{List, ListItem}, loading::Loading}, context::AppContext, hooks::use_file_list::{use_file_list, UseFileList}
+    components::{list::{List, ListItem}, loading::Loading}, context::AppContext, hooks::use_file_list::{use_file_list, UseFileList}, utils::url::set_url_params
 };
 
 #[component]
@@ -28,7 +30,9 @@ pub fn FileList(
                           view! {
                             <ListItem on_click=move |_| {
                               if file_clone.is_dir {
-                                set_path.set(format!("{}/{}", path.read(), file_clone.name));
+                                let new_path = format!("{}/{}", path.read(), file_clone.name);
+                                set_path.set(new_path.clone());
+                                set_url_params(&HashMap::from([("path".to_string(), new_path)]));
                               }
                             }>
                                 <div>{file.name}</div>
