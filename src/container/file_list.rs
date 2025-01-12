@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use leptos::logging::log;
 
 use leptos::prelude::*;
 
@@ -31,6 +32,7 @@ pub fn FileList(
                             <ListItem on_click=move |_| {
                               if file_clone.is_dir {
                                 let new_path = format!("{}/{}", path.read(), file_clone.name);
+                                log!("new_path2: {:?}", new_path);
                                 set_path.set(new_path.clone());
                                 set_url_params(&HashMap::from([("path".to_string(), new_path)]));
                               }

@@ -1,6 +1,7 @@
 use leptos::prelude::*;
+use web_sys::MouseEvent;
 
-use crate::{classnames, utils::dom::mount_style};
+use crate::{classnames, utils::{callback::BoxOneCallback, dom::mount_style}};
 
 #[component]
 pub fn Breadcrumb(#[prop(optional)] class: String, children: Children) -> impl IntoView {
@@ -29,6 +30,7 @@ pub fn BreadcrumbItem(#[prop(optional)] class: String, children: Children) -> im
 pub fn BreadcrumbButton(
     #[prop(optional)] class: String,
     #[prop(optional, into)] current: Signal<bool>,
+    #[prop(optional, into)] on_click: Option<BoxOneCallback<MouseEvent>>,
     children: Children,
 ) -> impl IntoView {
     let class_str = class.as_str();
@@ -37,8 +39,16 @@ pub fn BreadcrumbButton(
         ("kapla-breadcrumb-button--current", current.get()),
         class_str
     ];
+
+    let on_click = move |e| {
+        let Some(on_click) = on_click.as_ref() else {
+            return;
+        };
+        on_click(e);
+    };
+
     view! {
-        <button class=button_class>
+        <button class=button_class on:click=on_click>
             {children()}
         </button>
     }
