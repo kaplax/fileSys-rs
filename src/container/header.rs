@@ -19,10 +19,13 @@ pub fn Header() -> impl IntoView {
             .collect::<Vec<String>>()
     });
 
+
     let path_parts_len = Memo::new(move |_| path_parts.get().len());
 
     let on_click = move |index: usize| {
         // runtime error why
+        // because read() cannot read from the value of the signal until this guard is dropped, or it will cause a runtime error.
+        // https://book.leptos.dev/reactivity/working_with_signals.html
         // let breadcrumbs = path_parts.read();
         // if breadcrumbs.len() > 0 {
         //     let new_path = format!("/{}", breadcrumbs[..index].join("/"));
@@ -31,7 +34,6 @@ pub fn Header() -> impl IntoView {
         //     set_url_params(&HashMap::from([("path".to_string(), new_path)]));
         // }
 
-        // success why
         let new_path = {
             let breadcrumbs = path_parts.read();
             format!("/{}", breadcrumbs[..index].join("/"))
@@ -41,36 +43,43 @@ pub fn Header() -> impl IntoView {
     };
 
     view! {
-        <header class="border-b border-gray-200 shadow-sm py-2 px-4 ">
-        <Breadcrumb>
-          <BreadcrumbItem>
-            <BreadcrumbButton>
-              <a class="text-primary-color">"全部文件"</a>
-            </BreadcrumbButton>
-          </BreadcrumbItem>
-            {
-                move || {
-                    path_parts.get().into_iter()
-                    .enumerate()
-                    .map(|(index, path)| {
-                        let is_last = index == path_parts_len.get().overflowing_sub(1).0;
-                        view! {
-                            <BreadcrumbItem>
-                                <BreadcrumbButton on_click=move |_| on_click(index + 1)>
-                                    {path}
-                                </BreadcrumbButton>
-                            </BreadcrumbItem>
-                            {if !is_last {
-                                Some(view! { <BreadcrumbDivider /> })
-                            } else {
-                                None
-                            }}
+        <header class="border-b border-gray-200 shadow-sm py-2 px-4 sticky top-0 bg-white z-10">
+            <Breadcrumb>
+                <BreadcrumbItem>
+                    <BreadcrumbButton on_click=move |_| on_click(0)>
+                    <a class="text-primary-color">"全部文件"</a>
+                    </BreadcrumbButton>
+                    {move || {
+                        if path_parts.get().len() > 0 {
+                            Some(view! { <BreadcrumbDivider /> })
+                        } else {
+                            None
                         }
-                    })
-                    .collect::<Vec<_>>()
+                    }}
+                </BreadcrumbItem>
+                {
+                    move || {
+                        path_parts.get().into_iter()
+                        .enumerate()
+                        .map(|(index, path)| {
+                            let is_last = index == path_parts_len.get().overflowing_sub(1).0;
+                            view! {
+                                <BreadcrumbItem>
+                                    <BreadcrumbButton on_click=move |_| on_click(index + 1)>
+                                        {path}
+                                    </BreadcrumbButton>
+                                </BreadcrumbItem>
+                                {if !is_last {
+                                    Some(view! { <BreadcrumbDivider /> })
+                                } else {
+                                    None
+                                }}
+                            }
+                        })
+                        .collect::<Vec<_>>()
+                    }
                 }
-            }
-        </Breadcrumb>
-    </header>
+            </Breadcrumb>
+        </header>
       }
 }

@@ -52,3 +52,7 @@
 ### Day 11
 - pushState 修改 url params
 - use leptos-use
+
+### Day 13
+- learn leptos signal Getting and Setting 
+- 完善组件样式

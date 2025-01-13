@@ -1,4 +1,7 @@
 .kapla-list {
+  .kapla-list-body-inner {
+    margin-top: -1px;
+  }
   .kapla-list-item {
     display: block;
     line-height: 1.5;

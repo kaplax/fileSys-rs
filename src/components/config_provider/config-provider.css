@@ -21,4 +21,6 @@
 
   --padding-left: 12px;
   --padding-right: 12px;
+
+  --breadcrumb-max-width: 120px;
 }
