@@ -56,3 +56,7 @@
 ### Day 13
 - learn leptos signal Getting and Setting 
 - 完善组件样式
+
+### Day 15
+- add footer
+- TODO: 子组件如何调用父组件的 callback 并且携带自定义参数，并且在一个 move || {} 中使用 ??
