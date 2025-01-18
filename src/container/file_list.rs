@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use leptos::logging::log;
 
 use leptos::prelude::*;
 

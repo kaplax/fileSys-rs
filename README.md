@@ -60,3 +60,6 @@
 ### Day 15
 - add footer
 - TODO: 子组件如何调用父组件的 callback 并且携带自定义参数，并且在一个 move || {} 中使用 ??
+
+### Day 18
+- 使用 leptos 中的 Callback 优化代码

@@ -1,52 +1,21 @@
-use std::collections::HashMap;
-
 use crate::components::breadcrumb::{
     Breadcrumb, BreadcrumbButton, BreadcrumbDivider, BreadcrumbItem,
 };
-use crate::context::AppContext;
-use crate::utils::url::set_url_params;
-use leptos::logging::log;
 use leptos::prelude::*;
 
 #[component]
-pub fn Header() -> impl IntoView {
-    let AppContext { path, set_path } = use_context::<AppContext>().unwrap();
-    let path_parts = Memo::new(move |_| {
-        path.read()
-            .split("/")
-            .filter(|part| !part.is_empty())
-            .map(|part| part.to_string())
-            .collect::<Vec<String>>()
-    });
-
+pub fn Header(
+    #[prop(into)] on_click: Callback<(usize,)>,
+    #[prop(into)] path_parts: Signal<Vec<String>>,
+) -> impl IntoView {
 
     let path_parts_len = Memo::new(move |_| path_parts.get().len());
-
-    let on_click = move |index: usize| {
-        // runtime error why
-        // because read() cannot read from the value of the signal until this guard is dropped, or it will cause a runtime error.
-        // https://book.leptos.dev/reactivity/working_with_signals.html
-        // let breadcrumbs = path_parts.read();
-        // if breadcrumbs.len() > 0 {
-        //     let new_path = format!("/{}", breadcrumbs[..index].join("/"));
-        //     log!("new_path1: {:?}", new_path);
-        //     set_path.set(new_path.clone());
-        //     set_url_params(&HashMap::from([("path".to_string(), new_path)]));
-        // }
-
-        let new_path = {
-            let breadcrumbs = path_parts.read();
-            format!("/{}", breadcrumbs[..index].join("/"))
-        };
-        set_path.set(new_path.clone());
-        set_url_params(&HashMap::from([("path".to_string(), new_path)]));
-    };
 
     view! {
         <header class="border-b border-gray-200 shadow-sm py-2 px-4 sticky top-0 bg-white z-10">
             <Breadcrumb>
                 <BreadcrumbItem>
-                    <BreadcrumbButton on_click=move |_| on_click(0)>
+                    <BreadcrumbButton on_click=move |_| on_click.run((0,))>
                     <a class="text-primary-color">"全部文件"</a>
                     </BreadcrumbButton>
                     {move || {
@@ -65,7 +34,7 @@ pub fn Header() -> impl IntoView {
                             let is_last = index == path_parts_len.get().overflowing_sub(1).0;
                             view! {
                                 <BreadcrumbItem>
-                                    <BreadcrumbButton on_click=move |_| on_click(index + 1)>
+                                    <BreadcrumbButton on_click=move |_| on_click.run((index + 1,))>
                                         {path}
                                     </BreadcrumbButton>
                                 </BreadcrumbItem>

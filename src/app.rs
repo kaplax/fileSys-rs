@@ -8,7 +8,6 @@ use crate::utils::dom::mount_style;
 use crate::utils::url::{get_url_params, set_url_params};
 use leptos::prelude::*;
 use leptos_use::use_window;
-use leptos::logging::log;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -46,7 +45,7 @@ pub fn App() -> impl IntoView {
 
     view! {
         <ConfigProvider>
-            <Header />
+            <Header path_parts=path_parts on_click=handleBreadcrumbClick />
             <main>
                 <FileList />
             </main>
