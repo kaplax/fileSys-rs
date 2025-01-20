@@ -10,8 +10,8 @@ use leptos::prelude::*;
 use leptos_use::use_window;
 
 #[component]
-pub fn App() -> impl IntoView {
-    mount_style("reset", include_str!("styles/reset.css"));
+pub fn Main() -> impl IntoView {
+    mount_style("reset", include_str!("../../styles/reset.css"));
     let window = use_window();
     let url = window.as_ref().unwrap().location().search().unwrap();
     let url_params = get_url_params(url.as_str());
