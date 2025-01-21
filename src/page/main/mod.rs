@@ -54,7 +54,7 @@ pub fn Main() -> impl IntoView {
                     if path_parts.read().len() > 0 {
                         Some(view! {
                             <footer
-                                class="absolute bottom-0 flex justify-center items-center w-full h-10 bg-white"
+                                class="fixed bottom-0 flex justify-center items-center w-full h-10 bg-white"
                                 on:click=on_back
                             >
                                 "Back"
