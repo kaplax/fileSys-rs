@@ -33,7 +33,11 @@ pub fn use_file_list(path: ReadSignal<String>) -> UseFileList {
             set_loading.set(false);
         }
         if let Some(Ok(data)) = async_files.read().as_deref() {
-            set_files.set(data.list.clone());
+            let mut sorted_list = data.list.clone();
+            sorted_list.sort_by(|a, b| {
+                alphanumeric_sort::compare_str(&a.name, &b.name)
+            });
+            set_files.set(sorted_list);
             set_loading.set(false);
         }
     });

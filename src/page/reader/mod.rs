@@ -5,6 +5,7 @@ use leptos_router::params::Params;
 
 use crate::components::loading::Loading;
 
+use crate::components::pagination::Pagination;
 use crate::{
     hooks::use_file_list::{use_file_list, UseFileList},
     utils::global::ROOT_PATH,
@@ -27,6 +28,7 @@ pub fn Reader() -> impl IntoView {
             .and_then(|query| query.path.clone())
             .unwrap_or_default(),
     );
+    let (current_page, set_current_page) = signal(2);
 
     let UseFileList { loading, files } = use_file_list(path);
     let image_files = files;
@@ -46,6 +48,7 @@ pub fn Reader() -> impl IntoView {
     view! {
         <Show when=move || !loading.get() fallback=|| view! { <Loading>"Loading..."</Loading> }>
             <img src=move || format!("{}/{}/{}", ROOT_PATH, path.get().trim_start_matches('/'), current_image.get()) />
+            <Pagination current=current_page total=image_files.get().len() />
         </Show>
     }
 }
