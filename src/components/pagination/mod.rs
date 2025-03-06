@@ -1,4 +1,4 @@
-use std::cmp::min;
+use std::{cmp::min, future::ready};
 
 use leptos::{either::Either, prelude::*};
 
@@ -30,40 +30,55 @@ pub fn Pagination(
         MergedSignalOption { value: current }
     );
 
-    // let on_click_prev = move |_| {
-        // page_count.update(|val| *value + 1);
-    // };
+    // Create an action to handle page changes
+    let change_page = Action::new(move |page: &usize| {
+        let page = *page;
+        set_current.set(page);
+        
+        // Call the on_click callback if it exists
+        if let Some(callback) = on_click.as_ref() {
+            callback(page);
+        }
+        
+        // Return a ready future for the action
+        ready(())
+    });
 
-
-    let on_click = move |e| {
-        let Some(on_click) = on_click.as_ref() else {
-            return;
-        };
-        on_click(e);
+    let prev_click = move |_| {
+        let prev = if current.get() > 1 { current.get() - 1 } else { 1 };
+        change_page.dispatch(prev);
     };
 
+    let next_click = move |_| {
+        let next = if current.get() < total { current.get() + 1 } else { total };
+        change_page.dispatch(next);
+    };
 
     view! {
         <div class=pagination_class>
-            <Button>"Prev"</Button>
+            <Button on_click=prev_click>"Prev"</Button>
             {move || {
                 use_pagination(current.get(), total, 1)
                 .into_iter()
                 .map(|item| {
-                    if let PaginationItem::Number(num) = item {
-                        Either::Left(view! {
-                            <Button on_click=move |_| {
-                                set_current.set(num);
-                            }>{num}</Button>
-                        })
-                    } else {
-                        Either::Right(view! {
+                    match item {
+                        PaginationItem::Number(num) => {
+                            let num = num;
+                            let change_page = change_page.clone();
+                            
+                            Either::Left(view! {
+                                <Button on_click=move |_| {
+                                    change_page.dispatch(num);
+                                }>{num}</Button>
+                            })
+                        },
+                        _ => Either::Right(view! {
                             <Button>"..."</Button>
                         })
                     }
                 }).collect_view()
             }}
-            <Button>"Next"</Button>
+            <Button on_click=next_click>"Next"</Button>
         </div>
     }
 }
